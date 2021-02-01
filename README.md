@@ -35,7 +35,7 @@ We also use the simplest form `<path of the link stream>` if it is a directed li
 - FT: run `Python3 tb_diameter_stats.py FT FileA`
 - ST: run `Python3 tb_diameter_stats.py ST FileB`
 
-###### Computing pivot diameter
+##### Computing pivot diameter
 `cd ./src/stats/`
 - EAT: run `Python3 iFUB_eat_stats.py NumHubs NumTimes FileA`. 
 - LDT: run `Python3 iFUB_ldt_stats.py NumHubs NumTimes FileA`. 
