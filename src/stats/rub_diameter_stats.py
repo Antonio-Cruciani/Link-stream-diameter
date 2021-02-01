@@ -10,13 +10,13 @@ import argparse
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
-        description="Compute EAT or LDT diameter for all graps whose paths are in file "
-                    "'./TGraphs/TGraphs_list'")
+        description="Compute EAT or LDT diameter for all link streams whose paths are in file")
     parser.add_argument("EAT_LDT", type=str, help="EAT for Earliest arrival time diameter, "
                                                   "LDT for Latest departure time diameter")
+    parser.add_argument("file", type=str, help="file path")
     args = parser.parse_args()
 
-    input_path = './TGraphs/TGraphs_list'
+    input_path = args.file
 
     with open(input_path, "r") as f:
         for row in f:
@@ -37,6 +37,8 @@ if __name__ == '__main__':
 
             g = tg.Graph(file_path=g_path, is_directed=is_directed, latest_node=dummy_node)
 
+            min_t, max_t = g.get_time_interval()
+
             graph_name = g_path.rsplit('/', 1)[1]
             print('Graph ' + graph_name, flush=True)
             print('Graph ' + graph_name + ' Dummy node: ' + str(dummy_node), flush=True)
@@ -50,6 +52,7 @@ if __name__ == '__main__':
             if args.EAT_LDT == 'EAT':
                 print('DIAMETER EAT ON GRAPH: ' + g.get_file_path().rsplit('/', 1)[1] + '...', flush=True)
                 d, n_vis, sec = rub.rub_diam_eat(graph=g)
+                d = d - min_t
                 print('Diameter EAT: ' + str(d), flush=True)
                 print('Number of visits: ' + str(n_vis), flush=True)
                 print('Number of nodes: ' + str(num_nodes), flush=True)
@@ -58,6 +61,7 @@ if __name__ == '__main__':
             elif args.EAT_LDT == 'LDT':
                 print('DIAMETER LDT ON GRAPH: ' + g.get_file_path().rsplit('/', 1)[1] + '...', flush=True)
                 d, n_vis, sec = rub.rub_diam_ldt(graph=g)
+                d = max_t - d
                 print('Diameter LDT: ' + str(d), flush=True)
                 print('Number of visits: ' + str(n_vis), flush=True)
                 print('Number of nodes: ' + str(num_nodes), flush=True)

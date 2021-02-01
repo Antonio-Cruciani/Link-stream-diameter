@@ -1,6 +1,5 @@
 import sys
 
-# insert at 1, 0 is the script path (or '' in REPL)
 sys.path.insert(1, '../')
 
 import temporal_distances as td
@@ -12,11 +11,18 @@ from utils import util
 import random
 import math
 import numpy as np
+import argparse
 
 if __name__ == '__main__':
 
+    parser = argparse.ArgumentParser(
+        description="Compute LDT double sweep VS randoms BFS for all link streams whose paths are in file")
+    parser.add_argument("file", type=str, help="file path")
+
+    args = parser.parse_args()
+    input_path = args.file
+
     ldt_dist = td.LatestDeparturePath()
-    input_path = './TGraphs/TGraphs_list'
 
     dist_name = 'LDT'
     print('DISTANCE: ' + dist_name + '\n', flush=True)
@@ -39,11 +45,14 @@ if __name__ == '__main__':
                 is_directed = False
 
             graph_name = g_path.rsplit('/', 1)[1]
+            print("\n")
             print(dist_name + ' Graph ' + graph_name, flush=True)
             print(dist_name + ' Graph ' + graph_name + ' Dummy node: ' + str(dummy_node), flush=True)
             print(dist_name + ' Graph ' + graph_name + ' is_directed: ' + str(is_directed), flush=True)
 
             g = tg.Graph(file_path=g_path, is_directed=is_directed, latest_node=dummy_node)
+
+            t_min, t_max = g.get_time_interval()
 
             # Create opposite graph to compute forward LDT distances
             g_path_op = util.opposite_graph(folder=g.get_file_path().rsplit('/', 1)[0] + '/',
@@ -67,13 +76,13 @@ if __name__ == '__main__':
 
             start_nodes = random.sample(range(num_nodes), (4 * a) * 4)
             print('2SWEEP RESULTS: ', flush=True)
-            print('i = 1', flush=True)
+            # print('i = 1', flush=True)
 
             _, _, estimation = ts.two_sweep_2_ldt(graph=g, r=start_nodes[0])
 
-            print(dist_name + graph_name + ' StartNode=' + str(start_nodes[0]) + ' i=1 2SWecc: ' + str(estimation),
-                  flush=True)
-            print(dist_name + graph_name + ' i=1 MAX2SW: ' + str(estimation),
+            print(dist_name + graph_name + ' StartNode=' + str(start_nodes[0]) + ' i=1 2SWecc: ' +
+                  str(t_max - estimation), flush=True)
+            print(dist_name + graph_name + ' i=1 MAX2SW: ' + str(t_max - estimation),
                   flush=True)
 
             print('RND RESULTS:', flush=True)
@@ -85,29 +94,29 @@ if __name__ == '__main__':
                 back_bfs.bfs()
                 ecc = -(back_bfs.get_eccentricity_eat())
 
-                print(dist_name + graph_name + ' StartNode=' + str(start_nodes[h]) + ' i=1 RNDecc: ' + str(ecc),
+                print(dist_name + graph_name + ' StartNode=' + str(start_nodes[h]) + ' i=1 RNDecc: ' + str(t_max - ecc),
                       flush=True)
 
                 if ecc < rnd_estimation:
                     rnd_estimation = ecc
 
-            print(dist_name + graph_name + ' i=1 MAXrnd: ' + str(rnd_estimation), flush=True)
+            print(dist_name + graph_name + ' i=1 MAXrnd: ' + str(t_max - rnd_estimation), flush=True)
 
             for h in range(1, len(num_2sweep)):
                 print('2SWEEP RESULTS: ', flush=True)
-                print('i = ' + str(num_2sweep[h]), flush=True)
+                # print('i = ' + str(num_2sweep[h]), flush=True)
                 for j in range(num_2sweep[h - 1], num_2sweep[h]):
 
                     _, _, ecc = ts.two_sweep_2_ldt(graph=g, r=start_nodes[j])
 
                     print(dist_name + graph_name + ' StartNode=' + str(start_nodes[j]) + ' i=' + str(h+1) +
-                          ' 2SWecc: ' + str(ecc),
+                          ' 2SWecc: ' + str(t_max - ecc),
                           flush=True)
 
                     if ecc < estimation:
                         estimation = ecc
 
-                print(dist_name + graph_name + ' i=' + str(h+1) + ' MAX2SW: ' + str(estimation),
+                print(dist_name + graph_name + ' i=' + str(h+1) + ' MAX2SW: ' + str(t_max - estimation),
                       flush=True)
 
                 print('RND RESULTS:', flush=True)
@@ -118,11 +127,11 @@ if __name__ == '__main__':
                     ecc = -(back_bfs.get_eccentricity_eat())
 
                     print(dist_name + graph_name + ' StartNode=' + str(start_nodes[j]) + ' i=' + str(h+1) +
-                          ' RNDecc: ' + str(ecc),
+                          ' RNDecc: ' + str(t_max - ecc),
                           flush=True)
 
                     if ecc < rnd_estimation:
                         rnd_estimation = ecc
 
-                print(dist_name + graph_name + ' i=' + str(h+1) + ' MAXrnd: ' + str(rnd_estimation),
+                print(dist_name + graph_name + ' i=' + str(h+1) + ' MAXrnd: ' + str(t_max - rnd_estimation),
                       flush=True)

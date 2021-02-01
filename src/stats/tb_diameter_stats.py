@@ -10,26 +10,22 @@ import argparse
 
 if __name__ == '__main__':
 
-    # ldt_distance = td.LatestDeparturePath()
-    """
-    NB: LDT NEED REVERSED GRAPH!!
-    """
-    # eat_distance = td.EarliestArrivalPath()
-
     parser = argparse.ArgumentParser(
-        description="Compute FP or SP diameter for all graps whose paths are in file "
-                    "'./TGraphs/TGraphs_list'")
-    parser.add_argument("FPSP", type=str, help="FP for Fastest Path diameter, SP for Shortest Path diameter")
+        description="Compute FT or ST diameter for all link streams whose paths are in file")
+    parser.add_argument("FT_ST", type=str, help="FT for Fastest Time diameter, ST for Shortest Time diameter")
+    parser.add_argument("file", type=str, help="file path")
     args = parser.parse_args()
-    dist = None
-    if args.FPSP == 'FP':
+
+    if args.FT_ST == 'FT':
         dist = td.FastestPathOnePass()
-    if args.FPSP == 'SP':
+    elif args.FT_ST == 'ST':
         dist = td.ShortestPath()
+    else:
+        raise Exception('Error on argument FT_ST. Use FT for FT diameter or ST for ST diameter')
 
     distances = [dist]
 
-    input_path = './TGraphs/TGraphs_list'
+    input_path = args.file
 
     with open(input_path, "r") as f:
         for row in f:
@@ -50,18 +46,19 @@ if __name__ == '__main__':
 
             for dist in distances:
                 dist_name = dist.get_name()
-                print('DISTANCE: ' + dist_name)
+
+                print('DISTANCE: ' + args.FT_ST)
 
                 graph_name = g_path.rsplit('/', 1)[1]
-                print(dist_name + ' Graph ' + graph_name, flush=True)
-                print(dist_name + ' Graph ' + graph_name + ' Dummy node: ' + str(dummy_node), flush=True)
-                print(dist_name + ' Graph ' + graph_name + ' is_directed: ' + str(is_directed), flush=True)
+                print(args.FT_ST + ' Graph ' + graph_name, flush=True)
+                print(args.FT_ST + ' Graph ' + graph_name + ' Dummy node: ' + str(dummy_node), flush=True)
+                print(args.FT_ST + ' Graph ' + graph_name + ' is_directed: ' + str(is_directed), flush=True)
 
                 g = tg.Graph(file_path=g_path, is_directed=is_directed, latest_node=dummy_node)
                 start_time = time.time()
                 diameter = td.compute_diameter(graph=g, distance=dist)
                 end_time = time.time()
                 diam_time = end_time - start_time
-                print(dist_name + graph_name + ' DIAMETER: ' + str(diameter), flush=True)
+                print(args.FT_ST + graph_name + ' DIAMETER: ' + str(diameter), flush=True)
                 # print(dist_name + graph_name + ' TIME: ' + str(diam_time), flush=True)
                 print('\n', flush=True)

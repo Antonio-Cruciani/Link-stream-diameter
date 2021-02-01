@@ -1,7 +1,6 @@
 
 import sys
 
-# insert at 1, 0 is the script path (or '' in REPL)
 sys.path.insert(1, '../')
 
 import temporal_graph as tg
@@ -12,16 +11,16 @@ import argparse
 
 if __name__ == '__main__':
 
-    input_path = './TGraphs/TGraphs_list'
-
     parser = argparse.ArgumentParser(
-        description="Compute iFUB LDT for all graps whose paths are in file './TGraphs/TGraphs_list'")
-    parser.add_argument("NumberHubs", type=str, help="Number of hubs, log for log hubs")
+        description="Compute LDT pivot diameter for all link streams whose paths are in file")
+    parser.add_argument("NumberHubs", type=str, help="Number of hubs, log for log(n) hubs")
     parser.add_argument("NumberTimes", type=int, help="Number of times")
+    parser.add_argument("file", type=str, help="file path")
     args = parser.parse_args()
-    dist = None
+
     h = args.NumberHubs
     t = args.NumberTimes
+    input_path = args.file
 
     num_hub = [h]
     num_times = [t]
@@ -68,7 +67,7 @@ if __name__ == '__main__':
                         hubs = int(n_h)
 
                     #############################
-                    print('\nSTRATEGY 3', flush=True)
+                    # print('\nSTRATEGY 3', flush=True)
                     landmarks = []
                     # Give me n_h hub
                     _, hub = g.get_max_deg_out(n=hubs)
@@ -83,18 +82,20 @@ if __name__ == '__main__':
                     diam, num_visits_ifub, num_distinct_A, num_distinct_B, pairs_reach = ifub_ldt.ifub_on_landmarks(
                         graph=g, landmarks=landmarks)
 
-                    print('S3 LDT NumTimes=' + str(i) + ' NumHubs=' + str(num_hub[k]) + ' ' + graph_name +
+                    diam = t_max - diam
+
+                    print('LDT NumTimes=' + str(i) + ' NumHubs=' + str(num_hub[k]) + ' ' + graph_name +
                           ' DIAMETER: ' + str(diam), flush=True)
-                    print('S3 LDT NumTimes=' + str(i) + ' NumHubs=' + str(num_hub[k]) + ' ' + graph_name +
+                    print('LDT NumTimes=' + str(i) + ' NumHubs=' + str(num_hub[k]) + ' ' + graph_name +
                           ' NUMBER OF VISITS: ' + str(num_visits_ifub), flush=True)
 
-                    print('S3 LDT NumTimes=' + str(i) + ' NumHubs=' + str(num_hub[k]) + ' ' + graph_name +
+                    print('LDT NumTimes=' + str(i) + ' NumHubs=' + str(num_hub[k]) + ' ' + graph_name +
                           ' Pairs reachables with landmarks: ' + str(pairs_reach), flush=True)
-                    print('S3 LDT NumTimes=' + str(i) + ' NumHubs=' + str(num_hub[k]) + ' ' + graph_name +
+                    print('LDT NumTimes=' + str(i) + ' NumHubs=' + str(num_hub[k]) + ' ' + graph_name +
                           ' DISTINCT elements in A: ' + str(num_distinct_A), flush=True)
-                    print('S3 LDT NumTimes=' + str(i) + ' NumHubs=' + str(num_hub[k]) + ' ' + graph_name +
+                    print('LDT NumTimes=' + str(i) + ' NumHubs=' + str(num_hub[k]) + ' ' + graph_name +
                           ' DISTINCT elements in B: ' + str(num_distinct_B), flush=True)
-                    print('S3 LDT NumTimes=' + str(i) + ' NumHubs=' + str(num_hub[k]) + ' ' + graph_name +
+                    print('LDT NumTimes=' + str(i) + ' NumHubs=' + str(num_hub[k]) + ' ' + graph_name +
                           ' Min(Distinct A, Distinct B), maxBFS classic: ' +
                           str(min(num_distinct_A, num_distinct_B)), flush=True)
 
