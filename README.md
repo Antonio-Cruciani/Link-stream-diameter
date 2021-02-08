@@ -24,17 +24,17 @@ We also use the simplest form `<path of the link stream>` if it is a directed li
 - EAT: run `Python3 two_sweep_stats.py EAT fileA`. 
 - LDT: run `Python3 two_sweep_ldt_stats.py fileA`. 
 - FT: run `Python3 two_sweep_stats.py FT fileA`.
-- ST: run `Python3 two_sweep_stats.py FT fileB`.
+- ST: run `Python3 two_sweep_stats.py ST fileB`.
 
 ##### Computing the exact diameter for EAT and LDT using our algorithm:
 `cd ./src/stats/`
-- EAT: run `Python3 rub_diameter_stats.py EAT fileA` 
-- LDT: run `Python3 rub_diameter_stats.py LDT fileA`
+- EAT: run `Python3 rub_diameter_stats.py EAT fileA`.
+- LDT: run `Python3 rub_diameter_stats.py LDT fileA`.
 
 ##### Computing the exact diameter for FT and ST using the text-book algorithm:
 `cd ./src/stats/`
-- FT: run `Python3 tb_diameter_stats.py FT fileA`
-- ST: run `Python3 tb_diameter_stats.py ST fileB`
+- FT: run `Python3 tb_diameter_stats.py FT fileA`.
+- ST: run `Python3 tb_diameter_stats.py ST fileB`.
 
 ##### Computing pivot diameter:
 `cd ./src/stats/`
