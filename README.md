@@ -1,4 +1,5 @@
 # Link stream diameter
+Code associated with the paper: *M. Calamai, P. Crescenzi, A. Marino "On Computing the Diameter of (Weighted) Link Streams"*.
 ## Usage
 All files needed to generate stats are in the folder `./src/stats/`. 
 
