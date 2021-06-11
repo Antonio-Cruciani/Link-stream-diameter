@@ -164,6 +164,15 @@ def opposite_graph_ascend_traversal(folder, file):
                 f.write(str(traversal_time))
                 f.write("\n")
         print('Opposite graph created!\n')
+        
+        print('Loading graph...')
+        m = np.loadtxt(output_path, dtype=int, delimiter=' ', ndmin=2)
+        print('Sorting graph...')
+        m = m[m[:, 2].argsort()]
+        print('Saving sorted graph...')
+        np.savetxt(output_path, m, fmt='%i', delimiter=' ')
+        print('Saved! \n')
+    
     return output_path
 
 
