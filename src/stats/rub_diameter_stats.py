@@ -13,8 +13,11 @@ if __name__ == '__main__':
         description="Compute EAT or LDT diameter for all link streams whose paths are in file")
     parser.add_argument("EAT_LDT", type=str, help="EAT for Earliest arrival time diameter, "
                                                   "LDT for Latest departure time diameter")
-    parser.add_argument("file", type=str, help="file path")
+    parser.add_argument("file", type=str, help="File path")
     args = parser.parse_args()
+
+    if args.EAT_LDT not in {"EAT", "LDT"}:
+        raise Exception('Incorrect input argument, use EAT for EAT-Diameter or LDT for LDT-Diameter')
 
     input_path = args.file
 
@@ -24,50 +27,35 @@ if __name__ == '__main__':
                 continue
             row = row.split()
             if len(row) > 3:
-                raise Exception('In Input file, incorrect line: ' + str(row))
+                raise Exception('In input file, incorrect line: {}'.format(row))
             g_path = row[0]
             dummy_node = None
             is_directed = True
-            if len(row) > 1:
+            if len(row) > 1 and int(row[1]) >= 0:
                 dummy_node = int(row[1])
-                if dummy_node < 0:
-                    dummy_node = None
             if len(row) > 2:
                 is_directed = False
 
             g = tg.Graph(file_path=g_path, is_directed=is_directed, latest_node=dummy_node)
-
-            min_t, max_t = g.get_time_interval()
-
             graph_name = g_path.rsplit('/', 1)[1]
-            print('Graph ' + graph_name, flush=True)
-            print('Graph ' + graph_name + ' Dummy node: ' + str(dummy_node), flush=True)
-            print('Graph ' + graph_name + ' is_directed: ' + str(is_directed), flush=True)
-
-            if g.get_latest_node() is not None:
-                num_nodes = g.get_latest_node()
-            else:
-                num_nodes = g.get_num_nodes()
+            print('DISTANCE: ' + args.EAT_LDT, flush=True)
+            print("{} GRAPH={} DUMMY_NODE={} IS_DIRECTED={}"
+                  .format(args.EAT_LDT, graph_name, dummy_node, is_directed), flush=True)
 
             if args.EAT_LDT == 'EAT':
-                print('DIAMETER EAT ON GRAPH: ' + g.get_file_path().rsplit('/', 1)[1] + '...', flush=True)
-                d, n_vis, sec = rub.rub_diam_eat(graph=g)
-                d = d - min_t
-                print('Diameter EAT: ' + str(d), flush=True)
-                print('Number of visits: ' + str(n_vis), flush=True)
-                print('Number of nodes: ' + str(num_nodes), flush=True)
-                # print('Time spent: ' + str(sec), flush=True)
+                print('DIAMETER EAT ON GRAPH: ' + graph_name + '...', flush=True)
+                rub_diam = rub.RubDiameter(graph=g)
+                d, n_vis = rub_diam.get_eat()
+                print('DIAMETER_EAT={}'.format(d), flush=True)
+                print('NUMBER_OF_VISITS={}'.format(n_vis), flush=True)
+                print('NUMBER_OF_NODES={}'.format(g.get_n()), flush=True)
 
             elif args.EAT_LDT == 'LDT':
-                print('DIAMETER LDT ON GRAPH: ' + g.get_file_path().rsplit('/', 1)[1] + '...', flush=True)
-                d, n_vis, sec = rub.rub_diam_ldt(graph=g)
-                d = max_t - d
-                print('Diameter LDT: ' + str(d), flush=True)
-                print('Number of visits: ' + str(n_vis), flush=True)
-                print('Number of nodes: ' + str(num_nodes), flush=True)
-                # print('Time spent: ' + str(sec), flush=True)
-
-            else:
-                raise Exception('Incorrect input argument, use EAT for EAT diameter or LDT for LDT diameter')
+                print('DIAMETER LDT ON GRAPH: ' + graph_name + '...', flush=True)
+                rub_diam = rub.RubDiameter(graph=g)
+                d, n_vis = rub_diam.get_ldt()
+                print('DIAMETER_LDT={}'.format(d), flush=True)
+                print('NUMBER_OF_VISITS={}'.format(n_vis), flush=True)
+                print('NUMBER_OF_NODES={}'.format(g.get_n()), flush=True)
 
             print('\n', flush=True)

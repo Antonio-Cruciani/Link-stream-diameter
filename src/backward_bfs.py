@@ -1,25 +1,51 @@
 import numpy as np
-from utils import util
 
 
 class TemporalBackwardBFS:
-    def __init__(self, graph, start_node):
+    def __init__(self, graph, target_node: int, t_alpha=None, t_omega=None):
         """
         Temporal Backward BFS on graph "graph", it must be in reverse edge stream representation
         N.B. If you use TemporalBackwardBFS to compute fw LDT you must change the sign of distances and eccentricity
         """
         self.__n_nodes = graph.get_num_nodes()
         self.__graph = graph
-        # self.__file_path = graph.get_file_path()
         self.__is_directed = graph.get_is_directed()
-        self.__s = start_node
-        self.__min_time, self.__max_time = graph.get_time_interval()
+        self.__s = target_node
         self.__node_interval = []
         self.__eat = []
         self.__dur = []
         self.__eccentricity_eat = None
         self.__idx_farther_eat = None
         self.__reachables = 0
+
+        if t_alpha is None:
+            self.__t_alpha, _ = graph.get_time_interval()
+        else:
+            self.__t_alpha = t_alpha
+        if t_omega is None:
+            _, self.__t_omega = graph.get_time_interval()
+        else:
+            self.__t_omega = t_omega
+
+    def _compute_ecc_reach(self):
+        """
+        :returns:
+            - Index of node at maximum distance
+            - Eccentricity value
+            - The number of reachable nodes
+        """
+        node_idx = -1
+        node_count = 0
+        reachables = 0
+        ecc = np.NINF
+        for dist in self.__eat:
+            if dist != np.inf:
+                reachables += 1
+                if dist > ecc:
+                    ecc = dist
+                    node_idx = node_count
+            node_count += 1
+        return node_idx, ecc, reachables
 
     def get_eat(self):
         if len(self.__eat) == 0:
@@ -38,14 +64,12 @@ class TemporalBackwardBFS:
 
     def get_idx_farther_eat(self):
         """
-        Return the index of node with highest eccentricity
+        :return:
+            - Index of node with highest eccentricity
         """
         if self.__idx_farther_eat is None:
             self.bfs()
         return self.__idx_farther_eat
-
-    def get_graph_iter(self):
-        return self.__graph.graph_reader()
 
     def get_reachables(self):
         return self.__reachables
@@ -56,25 +80,24 @@ class TemporalBackwardBFS:
         """
         self.__eat = np.full((self.__n_nodes,), np.inf)
         self.__dur = np.full((self.__n_nodes,), np.inf)
-        self.__eat[self.__s] = self.__min_time
+        self.__eat[self.__s] = self.__t_alpha
         self.__dur[self.__s] = 0
-        self.__eccentricity_eat = self.__min_time
+        self.__eccentricity_eat = self.__t_alpha
         self.__idx_farther_eat = self.__s
-        # self.node_interval = np.full((self.n_nodes,), Interval(np.inf, np.inf, np.inf, np.inf, np.inf))
         for i in range(self.__n_nodes):
             self.__node_interval.append(Interval(np.inf, np.inf, np.inf, np.inf, np.inf))
-        last_t = self.__min_time - 1
-        # with open(self.__file_path) as f:
-        for line in self.get_graph_iter():
+        last_t = self.__t_alpha - 1
+        for line in self.__graph.graph_reader():
             if not line.strip():  # check if line is blank
                 break
             li = line.split()
-            # if len(li) != 3:
-            #    raise Exception('Line ' + line + ' not have correct number of fields')
+            if len(li) > 3:
+                raise Exception('Line ' + line + ' not have correct number of fields: Backward EAT work only with '
+                                                 'unweighted graph, transform it using dummies nodes before!')
             u = int(li[0])
             v = int(li[1])
             t = int(li[2])
-            if self.__min_time <= t <= self.__max_time:
+            if self.__t_alpha <= t < self.__t_omega:
                 if last_t != t:
                     self.__node_interval[self.__s].set(t + 1, t, t + 1, t, t + 1)
                     last_t = t
@@ -124,7 +147,7 @@ class TemporalBackwardBFS:
 
         if self.__graph.get_latest_node() is not None:
             self.__eat = self.__eat[:self.__graph.get_latest_node()]
-        self.__idx_farther_eat, self.__eccentricity_eat, self.__reachables = util.get_max_ind(self.__eat, np.NINF)
+        self.__idx_farther_eat, self.__eccentricity_eat, self.__reachables = self._compute_ecc_reach()
 
 
 class Interval:
