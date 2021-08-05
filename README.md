@@ -22,25 +22,27 @@ We also use the simplest form `<path of the link stream>` if it is a directed li
 
 ##### Computing Lower bounds:
 `cd ./src/stats/`
-- EAT: run `Python3 two_sweep_stats.py EAT fileA`. 
-- LDT: run `Python3 two_sweep_ldt_stats.py fileA`. 
-- FT: run `Python3 two_sweep_stats.py FT fileA`.
-- ST: run `Python3 two_sweep_stats.py ST fileB`.
+- EAT: run `python3 double_sweep_stats.py EAT fileA`
+- LDT: run `python3 double_sweep_stats.py LDT fileA`
+- FT: run `python3 double_sweep_stats.py FT fileA`
+- ST: run `python3 double_sweep_stats.py ST fileB`
 
 ##### Computing the exact diameter for EAT and LDT using our algorithm:
 `cd ./src/stats/`
-- EAT: run `Python3 rub_diameter_stats.py EAT fileA`.
-- LDT: run `Python3 rub_diameter_stats.py LDT fileA`.
+- EAT: run `python3 rub_diameter_stats.py EAT fileA`
+- LDT: run `python3 rub_diameter_stats.py LDT fileA`
 
-##### Computing the exact diameter for FT and ST using the text-book algorithm:
+##### Computing the exact diameter using the text-book algorithm:
 `cd ./src/stats/`
-- FT: run `Python3 tb_diameter_stats.py FT fileA`.
-- ST: run `Python3 tb_diameter_stats.py ST fileB`.
+- EAT: run `python3 text_book_diameter_stats.py EAT fileA`
+- LDT: run `python3 text_book_diameter_stats.py LDT fileA`
+- FT: run `python3 text_book_diameter_stats.py FT fileA`
+- ST: run `python3 text_book_diameter_stats.py ST fileB`
 
 ##### Computing pivot diameter:
 `cd ./src/stats/`
-- EAT: run `Python3 iFUB_eat_stats.py NumHubs NumTimes fileA`. 
-- LDT: run `Python3 iFUB_ldt_stats.py NumHubs NumTimes fileA`. 
-- FT: run `Python3 iFUB_ft_stats.py NumHubs NumTimes fileA`.
-- ST: run `Python3 iFUB_st_stats.py NumHubs NumTimes fileB`.
+- EAT: run `python3 pivot_ifub_diameter_stats.py EAT NumHubs NumTimes fileA`
+- LDT: run `python3 pivot_ifub_diameter_stats.py LDT NumHubs NumTimes fileA`
+- FT: run `python3 pivot_ifub_diameter_stats.py FT NumHubs NumTimes fileA`
+- ST: run `python3 pivot_ifub_diameter_stats.py ST NumHubs NumTimes fileB`
 
