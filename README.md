@@ -5,7 +5,7 @@ All files needed to generate stats are in the folder `./src/stats/`.
 
 ### Dataset
 
-The link at the dataset is here: https://bit.ly/3jv1AZh \
+The link at the dataset is here: https://bit.ly/2TYfdaR \
 Once unzipped, in order to use the facilities we provide below, the folder `graphs` must be placed in the folder `./src/stats/`.
 Each file in the folder `graphs` is a link stream, i.e. a list of temporal edges u v t lambda (see the paper). The links specified in each link stream are (and must be) sorted in increasing order of t.
 
@@ -13,7 +13,7 @@ Each file in the folder `graphs` is a link stream, i.e. a list of temporal edges
 The list of paths of the link streams to be considered must be written in a input file that must be passed in input.
 We provide the following files, fileA and fileB, which allow to run our experiments on the dataset we used and that can be downloaded using the link below.
 
-fileA: https://bit.ly/2YTyEAw \
+fileA: https://bit.ly/3fEVEMi \
 fileB: https://bit.ly/2MEsbXQ
 
 The file fileA and fileB assume that the folder `graphs` is placed in the folder `./src/stats/`. Each line of the input file, as it can be seen in fileA and fileB, respect this format:
