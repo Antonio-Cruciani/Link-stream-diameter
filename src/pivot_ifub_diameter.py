@@ -22,6 +22,9 @@ class PivotIfubDiameter:
             if t_omega < p[1] < t_alpha:
                 raise Exception("Pivot times should be between t_alpha and t_omega")
 
+        self.FW_tuples = []
+        self.BW_tuples = []
+
         self.__graph = graph
         self.__pivots = pivots
         self.__t_alpha = t_alpha
@@ -132,6 +135,7 @@ class PivotIfubDiameter:
         if self.__is_inA is None:
             if self.__graph.get_latest_node() is not None:
                 self.__compute_sets_a_b(td.EarliestArrivalTime)
+
             else:
                 self.__compute_sets_a_b(td.ShortestTime)
         return self.__is_inA
@@ -142,10 +146,10 @@ class PivotIfubDiameter:
         """
         if self.__is_inB is None:
             if self.__graph.get_latest_node() is not None:
-                self.__compute_sets_a_b(td.EarliestArrivalTime)
+                dist_pivot_fw, dist_pivot_bw, num_visits= self.__compute_sets_a_b(td.EarliestArrivalTime)
             else:
-                self.__compute_sets_a_b(td.ShortestTime)
-        return self.__is_inB
+                dist_pivot_fw, dist_pivot_bw, num_visits = self.__compute_sets_a_b(td.ShortestTime)
+        return self.__is_inB,self.FW_tuples,self.BW_tuples
 
     def __compute_diameter(self, distance_type: type(td.Distance)):
         """
@@ -297,8 +301,11 @@ class PivotIfubDiameter:
             for j in range(self.__graph.get_n()):
                 if dist_fw[i, j] != np.inf:
                     self.__is_inB[i, j] = True
+                    self.FW_tuples.append(j)
                 if dist_bw[i, j] != np.inf:
                     self.__is_inA[i, j] = True
+                    self.BW_tuples.append(j)
+
 
             d_fw, d_bw = self.__sort_remove_unreachable(dist_fw[i], dist_bw[i])
             dist_pivot_fw.append(d_fw)

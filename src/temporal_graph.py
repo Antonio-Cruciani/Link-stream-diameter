@@ -9,6 +9,8 @@ class Graph:
         :param is_directed: False indirected graph, True directed graph
         :param latest_node: if it is a value (not None) that value represents latest not dummy node + 1
         """
+        self.__temporal_adj_list = {}
+
         self.__file_path = file_path
         self.__txt_list = None
         self.__num_nodes = None
@@ -22,7 +24,6 @@ class Graph:
         self.__distinct_out_neighbors = None
         self.__distinct_in_neighbors = None
         self.__check_latest_node()
-
     def get_file_path(self):
         """
         Return the file path of the graph
@@ -216,6 +217,10 @@ class Graph:
             u = int(li[0])
             v = int(li[1])
             t = int(li[2])
+            if u in self.__temporal_adj_list.keys():
+                self.__temporal_adj_list[u][t]=0
+            else:
+                self.__temporal_adj_list[u] = {t:0}
             if len(li) == 4:
                 traversal_time = int(li[3])
             else:
@@ -234,7 +239,8 @@ class Graph:
         self.__min_time = min_time
         self.__max_time = max_time
         self.__edges_number = num_edges
-
+    def get_temporal_adj_list(self):
+        return self.__temporal_adj_list
     def __get_degrees(self):
         """
         Compute the degree of each node
