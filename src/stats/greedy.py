@@ -1,7 +1,7 @@
 from ast import Raise
 import sys
 import pickle
-
+import time
 sys.path.insert(1, '../')
 import argparse
 
@@ -46,7 +46,7 @@ class Greedy:
                 # Creating the temporal graph
                 #graph_name = g_path.rsplit('/', 1)[1]
                 print("Computing pivots")
-                g = tg.Graph(file_path=self.input_path, is_directed=is_directed, latest_node=dummy_node)
+                g = tg.Graph(file_path=g_path, is_directed=is_directed, latest_node=dummy_node)
                 
                 # Get the max and minimun time steps in the graph and the number of nodes
                 t_min,t_max = g.get_time_interval()
@@ -62,17 +62,23 @@ class Greedy:
                                 "BW":[],
                                 "FW" :[]
                             }
+
                 print("PIVOT NUMBER ",len(pivots))
 
                 # Get the pairs reachable throught each temporal pivot candidate
+                i = 0
                 for pivot in pivots.keys():
-                    print("COMPUTING PIVOT = ",pivot)
+                    #print("COMPUTING PIVOT = ",pivot)
                     a = ifub(g,[pivot])
                     a.get_reachable_pairs()
                     matrix, FW, BW = a.get_is_in_b()
                     pivots[pivot]["BW"] = BW
                     pivots[pivot]["FW"] = FW
-                print(pivots)
+                    if (i % 100 == 0 and i != 0):
+                        print("PROCESSED ", i, " PIVOTS ")
+                    i += 1
+                #print(pivots)
+                print("Computed result for each pivot")
 
                 outfile = open(g_path + '_pivot_candidates.pickle','wb')
                 pickle.dump(pivots, outfile)
@@ -105,8 +111,10 @@ class Greedy:
                 
         NotImplementedError()
 
- 
-input ='/home/antoniocruciani/PycharmProjects/Link-stream-diameter/src/stats/graphs/SNAP/sx-mathoverflow-a2q.txt.sor'
+
+
+
+input ='/home/antoniocruciani/PycharmProjects/Link-stream-diameter/fileB'
 k = 3
 alg = Greedy(input,k)
 alg.generate_temporal_pivot_candidates()
