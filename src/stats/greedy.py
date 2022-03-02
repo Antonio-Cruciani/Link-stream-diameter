@@ -108,8 +108,59 @@ class Greedy:
                 infile = open(g_path + '_pivot_candidates.pickle','rb')
                 p_candidates = pickle.load(infile)
                 infile.close()
+
+                if self.k < 1:
+                    argparse.ArgumentError('K have to be at least 1')
+
+                # Get as a first pivot the temporal node that reaches more pairs
+                best_pivot = None
+                best_pivot_pairs = 0
+                best_pivot_BW = []
+                best_pivot_FW = []
+
+                for pivot_candidate in p_candidates:
+                    pivot_candidate_pairs = len(pivot_candidate['BW']) * len(pivot_candidate['FW'])
+                    if pivot_candidate_pairs > best_pivot_pairs:
+                        best_pivot = pivot_candidate
+                        best_pivot_pairs = pivot_candidate_pairs
+                        best_pivot_BW = pivot_candidate['BW']
+                        best_pivot_FW = pivot_candidate['FW']
+
+                del(p_candidates[best_pivot])
+
+                # Select the rest of the pivots
+                pivot_set = [best_pivot]
+                pivot_set_BW = set(best_pivot_BW)
+                pivot_set_FW = set(best_pivot_FW)
+
+                for i in range(1, self.k):
+                    best_pivot = None
+                    best_pivot_pairs = 0
+                    best_pivot_BW = set()
+                    best_pivot_FW = set()
+
+                    # Select as new pivot that one that increases the most the reach of the pivot set
+                    for pivot_candidate in p_candidates:
+                        pivot_candidate_BW = pivot_set_BW.union(pivot_candidate['BW'])
+                        pivot_candidate_FW = pivot_set_FW.union(pivot_candidate['FW'])
+
+                        pivot_candidate_pairs = len(pivot_candidate_BW) * len(pivot_candidate_FW)
+
+                        if pivot_candidate_pairs >= best_pivot_pairs:
+                            best_pivot = pivot_candidate
+                            best_pivot_pairs = pivot_candidate_pairs
+                            best_pivot_BW = pivot_candidate_BW
+                            best_pivot_FW = pivot_candidate_FW
+
+                    pivot_set.append(best_pivot)
+                    pivot_set_pairs = best_pivot_pairs
+                    pivot_set_BW = best_pivot_BW
+                    pivot_set_FW = best_pivot_FW
+
+                    del(p_candidates(best_pivot))
+
                 
-        NotImplementedError()
+        return pivot_set
 
 
 
